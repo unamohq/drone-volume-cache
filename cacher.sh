@@ -7,9 +7,9 @@ if [ -z "$PLUGIN_MOUNT" ]; then
 fi
 
 if [[ $DRONE_COMMIT_MESSAGE == *"[CLEAR CACHE]"* && -n "$PLUGIN_RESTORE" && "$PLUGIN_RESTORE" == "true" ]]; then
-    if [ -d "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH" ]; then
+    if [ -d "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH" ]; then
         echo "Found [CLEAR CACHE] in commit message, clearing cache!"
-        rm -rf "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER"
+        rm -rf "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER"
     fi
 fi
 
@@ -24,20 +24,20 @@ if [[ -n "$PLUGIN_REBUILD" && "$PLUGIN_REBUILD" == "true" ]]; then
     for source in "${SOURCES[@]}"; do
         if [ -d "$source" ]; then
             echo "Rebuilding cache for $source..."
-            mkdir -p "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source" && \
-                rsync -aHA --delete "$source/" "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source"
+            mkdir -p "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source" && \
+                rsync -aHA --delete "$source/" "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source"
         else
             echo "$source does not exist, removing from cached folder..."
-            rm -rf "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source"
+            rm -rf "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source"
         fi
     done
 elif [[ -n "$PLUGIN_RESTORE" && "$PLUGIN_RESTORE" == "true" ]]; then
     # Restore from cache
     for source in "${SOURCES[@]}"; do
-        if [ -d "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source" ]; then
+        if [ -d "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source" ]; then
             echo "Restoring cache for $source..."
             mkdir -p "$source" && \
-                rsync -aHA --delete "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source/" "$source"
+                rsync -aHA --delete "/ssd/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$DRONE_JOB_NUMBER/$source/" "$source"
         else
             echo "No cache for $source"
         fi
