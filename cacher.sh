@@ -23,7 +23,7 @@ if [[ -n "$PLUGIN_REBUILD" && "$PLUGIN_REBUILD" == "true" ]]; then
     # Create cache
     for source in "${SOURCES[@]}"; do
         if [ -d "$source" ]; then
-            echo "Rebuilding cache for $source..."
+            echo "Rebuilding cache to /cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$source from $source..."
             mkdir -p "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$source" && \
                 rsync -aHA --delete "$source/" "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$source"
         else
@@ -35,7 +35,7 @@ elif [[ -n "$PLUGIN_RESTORE" && "$PLUGIN_RESTORE" == "true" ]]; then
     # Restore from cache
     for source in "${SOURCES[@]}"; do
         if [ -d "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$source" ]; then
-            echo "Restoring cache for $source..."
+            echo "Restoring cache for $source from /cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$source..."
             mkdir -p "$source" && \
                 rsync -aHA --delete "/cache/$DRONE_REPO_OWNER/$DRONE_REPO_NAME/$DRONE_COMMIT_BRANCH/$source/" "$source"
         else
